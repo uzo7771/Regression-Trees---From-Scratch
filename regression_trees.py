@@ -47,7 +47,6 @@ class RegressionTree:
         return cost_left, cost_right 
     def _find_best_split(self, X, y, H):
         # Finds the best feature and threshold to split the data.
-
         best_feature, best_threshold, best_variance_reduction = None, None, -np.inf
         best_cost_left, best_cost_right = None, None
         for feature in range(X.shape[1]):
@@ -59,8 +58,7 @@ class RegressionTree:
                 cost_left, cost_right = self._VarianceReduction(X[:,feature], y, threshold)
                 variance_reduction = H - (cost_left + cost_right)
                 if variance_reduction > best_variance_reduction:
-                    best_feature, best_threshold, best_variance_reduction = feature, threshold, variance_reduction  
-                    #print(H, -(variance_reduction-H), variance_reduction, cost_left, cost_right, np.sum(X[:,feature]<=best_threshold), self._MSE(y[X[:,feature]<=best_threshold]))  
+                    best_feature, best_threshold, best_variance_reduction = feature, threshold, variance_reduction   
                     best_cost_left = cost_left
                     best_cost_right = cost_right
         return {"feature_number": best_feature, "threshold": best_threshold, "best_variance_reduction": best_variance_reduction,
@@ -88,12 +86,9 @@ class RegressionTree:
         left_mask = X[:, best_feature] <= best_threshold
         right_mask = ~left_mask
 
-        #print("test: ", np.sum(left_mask))
         if len(y[left_mask]) < self.min_samples_leaf or len(y[right_mask]) < self.min_samples_leaf:
             self.a +=1
             return TreeNode(value=np.mean(y), cost = cost)
-
-        #print("test:", self._MSE(y[left_mask]), self._MSE(y[right_mask]))
 
         left_node = self._build_tree(X = X[left_mask], y = y[left_mask], depth = depth + 1, cost = cost_left)
         right_node = self._build_tree(X = X[right_mask], y = y[right_mask], depth = depth + 1, cost = cost_right)
