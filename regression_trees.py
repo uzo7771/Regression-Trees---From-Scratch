@@ -15,6 +15,8 @@ class RegressionTree:
     def __init__(self, X, y, max_depth=10, min_samples_split=5, min_samples_leaf = 1, n_features=None):
         if len(X.shape) == 1:
             self.X = X = X.reshape(-1, 1)
+        if n_features is None:
+            n_features = np.shape(X)[1]
         if n_features > np.shape(X)[1]:
             raise ValueError(f"The maximum number of features is {np.shape(X)[1]}")
         self.X = X
@@ -48,10 +50,8 @@ class RegressionTree:
         return cost_left, cost_right 
     def _find_best_split(self, X, y, H):
         # Finds the best feature and threshold to split the data.
-        if self.n_features is not None:
-            possible_features_indexes = random.sample(range(0,np.shape(X)[1]), self.n_features)
-        else:
-            possible_features_indexes = range(np.shape(X)[1])
+        
+        possible_features_indexes = random.sample(range(0,np.shape(X)[1]), self.n_features)
 
         best_feature, best_threshold, best_variance_reduction = None, None, -np.inf
         best_cost_left, best_cost_right = None, None
